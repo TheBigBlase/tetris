@@ -14,15 +14,11 @@ set(src
 	)
 
 
-
-set(CMAKE_DEBUG_POSTFIX d)
-
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
 add_executable(tetris ${src})
 
-set_target_properties(tetris PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 target_compile_features(tetris PRIVATE c_std_99)
 target_include_directories(tetris PRIVATE ${CURSES_LIBRARIES})
