@@ -17,21 +17,21 @@ include(cmake/variables.cmake)
 
 add_library(
     tetris_lib OBJECT
-    source/lib.c
-		source/tetris.c
+    src/lib.c
+		src/tetris.c
 )
 
 target_include_directories(
     tetris_lib ${warning_guard}
     PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
 )
 
 target_compile_features(tetris_lib PUBLIC c_std_99)
 
 # ---- Declare executable ----
 
-add_executable(tetris_exe source/main.c)
+add_executable(tetris_exe src/main.c)
 add_executable(tetris::exe ALIAS tetris_exe)
 
 set_target_properties(
