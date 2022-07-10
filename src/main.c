@@ -1,14 +1,12 @@
 #include <stdio.h>
-
-#include "lib.h"
+#include "tetris.h"
 
 int main(int argc, const char* argv[])
 {
-  struct library lib = create_library();
 
-  (void)argc;
+  (void)argc; //TODO take care of args later
   (void)argv;
 
-  printf("Hello from %s!", lib.name);
+	init();
   return 0;
 }
