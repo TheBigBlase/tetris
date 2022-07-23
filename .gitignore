@@ -11,3 +11,9 @@ CMakeUserPresets.json
 .clang*
 .github/
 .codespellrc
+tetris
+tetrisd
+CMakeFiles*
+Makefile
+CMakeCache.txt
+cmake_install.cmake

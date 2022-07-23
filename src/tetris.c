@@ -4,69 +4,207 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <ncurses.h>
 
 
 //PROTOTYPES 
-void checkInput();
-
+//
+void fall(GameState *);
+void dropOrSpawn(GameState *);
+void checkInput(GameState *);
+void genNewPiece(Piece *, int);
+char lineComplete(char **);
 
 void rotate(Piece * p){
-	p->position ++;
+	p->rotation ++;
 }
 
-void fall(Piece * p){
+char lineComplete(char ** grid){
+	char found = 0;
+	for(char k ; k < GRID_Y ; k++){
+		for(char l ; l < GRID_X ; l++){
+			if(grid[l][k]){
+				found = 1;
+			}
+		}
+	}
+}
+
+void dropOrSpawn(GameState * state){
+	if(!state->fallingPiece){
+		if(!!lineComplete(state->grid)){//!! <=> char to bool
+			//TODO
+		}
+		else{
+			state->fallingPiece = newPiece();
+		}
+	}
+	else{
+		fall(state);
+	}
+}
+
+void fall(GameState * state){
 	//update piece location
-	if(!p->isFalling){
+	if(!state->fallingPiece->isFalling){
 		exit(-1);//can ignore this warning, this part is single thread
 	}
 	//check if can fall
-	if(grid[p->location[0]][p->location[1]] == 1){ // TODO for all square not just center
+	if(*state->grid[state->fallingPiece->location[0]]
+			[state->fallingPiece->location[1]] == 1){ 
+		// TODO for all square not just center
 		//if square full then lay piece
-		p->isFalling = 0;
-		
+		state->fallingPiece->isFalling = 0;
 	}
 
-	p->location[1] --;
+	state->fallingPiece->location[1] --;
 
 }
 
 Piece * newPiece(){
 	int n = rand() % NUMBER_SHAPE;
 	//TODO
+
+	Piece * p = malloc(sizeof(Piece)); //TODO calloc ?
+	p->location[0] = 0;
+	p->location[1] = 0;
+	p->rotation = 0;
+	p->isFalling = 1;
+
+	genNewPiece(p, n);
+
+	return p;
+}
+
+void genNewPiece(Piece * p, int n){
+	Shape * shape;
+	char tmp[4][4];
+
+	switch(n){
+		case BAR:
+			{
+				char **tmp = {
+						{0, 0, 1, 0},
+						{0, 0, 1, 0},
+						{0, 0, 1, 0},
+						{0, 0, 1, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+		case Z:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 1, 1, 0},
+						{0, 0, 1, 1},
+						{0, 0, 0, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+		case INVZ:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 0, 1, 1},
+						{0, 1, 1, 0},
+						{0, 0, 0, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+		case T:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 0, 1, 0},
+						{0, 1, 1, 0},
+						{0, 0, 1, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+		case SQUARE:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 1, 1, 0},
+						{0, 1, 1, 0},
+						{0, 0, 0, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+
+		case L:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 1, 1, 0},
+						{0, 0, 1, 0},
+						{0, 0, 1, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+		case INVL:
+			{
+				char **tmp = {
+						{0, 0, 0, 0},
+						{0, 1, 1, 0},
+						{0, 1, 0, 0},
+						{0, 1, 0, 0}
+						};
+
+				shape->shape[0] = arrayToInt(tmp)[0];
+				shape->shape[1] = arrayToInt(tmp)[1];
+				break;
+		 }
+
+	}
+	p->shape = shape;
 }
 
 
-void initBar(){
-	void * pieces[NUMBER_SHAPE][NUMBER_POSITION];//dont conserve type
-	int * tmp = malloc(2); //2 bytes = 16 bits
-
-	pieces[BAR][ZERO] = (void*)tmp; //no type needed
-}
-
-void initGame(){
+GameState * initGame(){
 	//init grid 
-	char grid[GRID_Y][GRID_X];
+	GameState * state = malloc(sizeof(GameState));
+
 	for(int k = 0 ; k < GRID_X ; k++){
 		for(int l = 0 ; l < GRID_Y ; l ++){
-			grid[k][l] = 0;
+			state->grid[k][l] = 0;
 		}
 	}
 	//init rand
 	srand(time(0));
-	pauseGame = 0;
-	speed = 500000; //.5s
-	if((pid = fork()) == 0){
-		checkInput();
+	state->pauseGame = 0;
+	state->speed = 500000; //.5s
+	if((state->pid = fork()) == 0){
+		checkInput(state);
 	}
 
-	pid = 0;
+	state->pid = 0;
+	return state;
 }
 
-void renderFrame(){
+void renderFrame(GameState * state){
 	//TODO
 	for(char y = 0 ; y < GRID_Y ; y++){
 		for(char x = 0 ; x < GRID_X ; x++){
-			if(grid[x][y]){
+			if(state->grid[x][y]){
 				printf("X");//TODO colors of block
 			}
 			else{
@@ -78,11 +216,12 @@ void renderFrame(){
 }
 
 void play(){
-	initGame();
+	GameState * state = initGame();
 
-	while(!pauseGame){
-		renderFrame();
-		usleep(speed);
+	while(!state->pauseGame){
+		renderFrame(state);
+		dropOrSpawn(state);
+		usleep(state->speed);
 	}
 }
 
@@ -113,13 +252,13 @@ int * arrayToInt(char ** c){//needed ?
 	return res;
 }
 
-void checkInput(){
+void checkInput(GameState * state){
 	for(;;){
-		//TODO
+		state->keyPressed = getch();
 	}
 }
 
-void endGame(){
+void endGame(GameState * state){
 	if(pid == 0){
 		//wait for press q then exit both
 	}

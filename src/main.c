@@ -5,8 +5,8 @@ int main(int argc, const char* argv[])
 {
 
   (void)argc; //TODO take care of args later
-  (void)argv;
+  (void)argv; //woop goes to trash
 
-	init();
+	play();
   return 0;
 }

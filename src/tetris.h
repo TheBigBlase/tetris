@@ -16,7 +16,28 @@ extern char grid[GRID_X][GRID_Y]; //grid contains shapes
 extern char pauseGame;
 extern int speed;
 extern int pid;
+extern int keyPressed;
 
+typedef struct Shape{
+	int shape[2];
+}Shape;
+
+typedef struct Piece{//colors are intrinsic to piece
+	char location[2];//[x, y]
+	int rotation;//rotation wise
+	Shape * shape;
+	char isFalling;
+} Piece;
+
+
+typedef struct GameState {
+	int keyPressed;
+	char pauseGame;
+	char * grid[GRID_X][GRID_Y];//pointer to array of arrays
+	int pid;
+	int speed;
+	Piece * fallingPiece;
+} GameState;
 
 typedef struct Game{
 	int score;
@@ -24,23 +45,11 @@ typedef struct Game{
 	int state;
 } Game;
 
-typedef struct Piece{//colors are intrinsic to piece
-	int location[2];//[x, y]
-	int position;//rotation wise
-	int shape;
-	char isFalling;
-} Piece;
-
-typedef struct Shape{
-	char shape[4][4];
-}Shape;
-
 // FUNCS 
-void initGame();
+GameState * initGame();
 void endGame();//needed here ?
 void play();
 void rotate(Piece*);
-void fall(Piece*);
 Piece * newPiece();
 int * arrayToInt(char **);
 char ** intToArray(int *);
