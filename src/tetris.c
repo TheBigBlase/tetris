@@ -9,11 +9,11 @@
 
 //PROTOTYPES 
 //
-void fall(GameState *);
-void dropOrSpawn(GameState *);
-void checkInput(GameState *);
-void genNewPiece(Piece *, int);
-char lineComplete(char **);
+void fall(GameState * state);
+void dropOrSpawn(GameState * state);
+void checkInput(GameState * state);
+void genNewPiece(Piece * piece, int n);
+char lineComplete(char ** array);
 
 void rotate(Piece * p){
 	p->rotation ++;
@@ -33,7 +33,7 @@ char lineComplete(char ** grid){
 void dropOrSpawn(GameState * state){
 	if(!state->fallingPiece){
 		if(!!lineComplete(state->grid)){//!! <=> char to bool
-			//TODO
+			//TODO remove line comptlete
 		}
 		else{
 			state->fallingPiece = newPiece();
@@ -94,6 +94,7 @@ void genNewPiece(Piece * p, int n){
 				shape->shape[1] = arrayToInt(tmp)[1];
 				break;
 		 }
+
 		case Z:
 			{
 				char **tmp = {
@@ -107,6 +108,7 @@ void genNewPiece(Piece * p, int n){
 				shape->shape[1] = arrayToInt(tmp)[1];
 				break;
 		 }
+
 		case INVZ:
 			{
 				char **tmp = {
@@ -120,6 +122,7 @@ void genNewPiece(Piece * p, int n){
 				shape->shape[1] = arrayToInt(tmp)[1];
 				break;
 		 }
+
 		case T:
 			{
 				char **tmp = {
@@ -133,6 +136,7 @@ void genNewPiece(Piece * p, int n){
 				shape->shape[1] = arrayToInt(tmp)[1];
 				break;
 		 }
+
 		case SQUARE:
 			{
 				char **tmp = {
@@ -161,6 +165,7 @@ void genNewPiece(Piece * p, int n){
 				break;
 		 }
 		case INVL:
+
 			{
 				char **tmp = {
 						{0, 0, 0, 0},
@@ -202,17 +207,19 @@ GameState * initGame(){
 
 void renderFrame(GameState * state){
 	//TODO
-	for(char y = 0 ; y < GRID_Y ; y++){
+	clear();
+	for(char y = 1 ; y < GRID_Y ; y++){
 		for(char x = 0 ; x < GRID_X ; x++){
 			if(state->grid[x][y]){
-				printf("X");//TODO colors of block
+				printw("X");//TODO colors of block
 			}
 			else{
-				printf(" ");
+				printw(" ");
 			}
 		}
-		printf("\n");
+		printw("\n");
 	}
+	refresh();
 }
 
 void play(){
