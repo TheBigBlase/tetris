@@ -19,7 +19,7 @@ extern int pid;
 extern int keyPressed;
 
 typedef struct Shape{
-	int shape[2];
+	int shape[2];//infamous char[4][4]
 }Shape;
 
 typedef struct Piece{//colors are intrinsic to piece
@@ -33,7 +33,7 @@ typedef struct Piece{//colors are intrinsic to piece
 typedef struct GameState {
 	int keyPressed;
 	char pauseGame;
-	char * grid[GRID_X][GRID_Y];//pointer to array of arrays
+	char (*grid)[GRID_X][GRID_Y];//pointer to array of arrays
 	int pid;
 	int speed;
 	Piece * fallingPiece;
@@ -51,6 +51,6 @@ void endGame();//needed here ?
 void play();
 void rotate(Piece*);
 Piece * newPiece();
-int * arrayToInt(char **);
+int * arrayToInt(char [4][4]);
 char ** intToArray(int *);
 #endif
