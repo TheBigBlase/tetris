@@ -72,7 +72,7 @@ void fallOrSpawn(GameState * state)
 void fall(Piece * p)
 {
 	//update piece location
-	(*p->location)[1] ++;
+	(*p->location)[1]++;
 }
 
 //checks if can move downward
@@ -159,8 +159,8 @@ void moveLeft(Piece * p)
 void updatePieceOnGrid(Piece * p, grid_t grid)
 {
 	//puts a piece on the grid (locks it) and frees it
-	char px = *p->location[0];
-	char py = *p->location[1];
+	char px = (*p->location)[0];
+	char py = (*p->location)[1];
 
 	for(char x = 0 ; x < 4 ; x++) {
 		for(char y = 0 ; y < 4 ; y++) {//overflow y
@@ -326,8 +326,8 @@ GameState * initGame()
 char checkPieceRange(Piece * p, char x, char y)
 {
 	char res = 0;
-	if((*p->location[0]) > x - 4 && (*p->location)[0] <= x) {
-		if((*p->location[1]) > y - 4 && (*p->location)[1] <= y) {
+	if((*p->location)[0] > x - 4 && (*p->location)[0] <= x) {
+		if((*p->location)[1] > y - 4 && (*p->location)[1] <= y) {
 			res = 1;
 		}
 	}
@@ -340,14 +340,15 @@ void renderFrame(GameState * state)
 	clear();
 	for(char y = 0 ; y < GRID_Y ; y++) {
 		addch('|');//start of line
-		for(char x = 0 ; x < GRID_X  ; x++) {
-			//print grid
+		for(char x = 0 ; x < GRID_X ; x++) {
+			//print all full cells
 			if((*state->grid)[x][y]) {
 				addch('X');//TODO colors of block
 			}
 			else {
 				//print piece
-				if(state->fallingPiece && state->fallingPiece->isFalling) {
+				// TODO refactor new func
+				if(!!state->fallingPiece && state->fallingPiece->isFalling) {
 					Piece * p = state->fallingPiece;
 					if(checkPieceRange(p, x, y)) {
 						//peices are drawn upside down, so y then x
